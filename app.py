@@ -40,22 +40,22 @@ if "kpi_flag" not in st.session_state:
 col_s, col_b ,col_i= st.columns([1, 3, 1],gap="large")  # Adjust the width ratio
 
 
-col_s.markdown(
-    """
-    <style>
-    div[data-testid="stSelectbox"] {
-        width: 300px !important;  /* Adjust width */
-        height: 30px !important;  /* Adjust height */
-    }
-    div[data-testid="stButton"] button {
-        width: 100px !important; /* Adjust button width */
-        height: 35px !important; /* Adjust button height */
-        margin: 50px 2px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# col_s.markdown(
+#     """
+#     <style>
+#     div[data-testid="stSelectbox"] {
+#         width: 300px !important;  /* Adjust width */
+#         height: 30px !important;  /* Adjust height */
+#     }
+#     div[data-testid="stButton"] button {
+#         width: 100px !important; /* Adjust button width */
+#         height: 35px !important; /* Adjust button height */
+#         margin: 50px 2px;
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
 
 selected_ticker=col_s.selectbox("Select the Payee ::", ['SMAR', 'NVDA'])
 button=col_s.button("Start")
