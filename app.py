@@ -288,30 +288,33 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
             else:
                 filtered_KPI = [kpi for kpi in st.session_state['list_of_KPI'] if kpi['Score'] == 1]
 
+            if len(filtered_KPI):
+                for i in range(0, len(filtered_KPI), num_of_cols):
+                    # Create a row with `num_of_cols` columns
+                    cols = st.columns(num_of_cols)
+                    st.markdown("<div style='margin-bottom: 20px;'>", unsafe_allow_html=True)
+                    for j, kpi1 in enumerate(filtered_KPI[i:i + num_of_cols]):
+                        score_color = get_score_color(kpi1['Score'])
+                        card_bg_color = get_card_background_color(kpi1['Score'])
+                        with cols[j]:
+                            st.write(
+                                f"""<div style='padding: 10px; border: 1px solid #ddd; border-radius: 8px; 
+                                    height: 220px; overflow-y: auto; background-color: {card_bg_color};'>
+                                    <p style="font-size: 18px; font-weight: bold; margin: 0; color: {score_color};">
+                                        {kpi1['Score']}
+                                    </p>
+                                    <p style="font-size: 14px; font-weight: bold; margin: 5px 0; color: {score_color};">
+                                        {kpi1['KPI']}
+                                    </p>
+                                    <p style="margin: 5px 0; font-size: 14px; color: #666;">
+                                        {kpi1['why']}
+                                    </p>
+                                </div>""",
+                                unsafe_allow_html=True,
+                            )
+                        st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
+            else:
+                st.info("No KPIs belong to the medium score category.")  
 
-            for i in range(0, len(filtered_KPI), num_of_cols):
-                # Create a row with `num_of_cols` columns
-                cols = st.columns(num_of_cols)
-                st.markdown("<div style='margin-bottom: 20px;'>", unsafe_allow_html=True)
-                for j, kpi1 in enumerate(filtered_KPI[i:i + num_of_cols]):
-                    score_color = get_score_color(kpi1['Score'])
-                    card_bg_color = get_card_background_color(kpi1['Score'])
-                    with cols[j]:
-                        st.write(
-                            f"""<div style='padding: 10px; border: 1px solid #ddd; border-radius: 8px; 
-                                height: 220px; overflow-y: auto; background-color: {card_bg_color};'>
-                                <p style="font-size: 18px; font-weight: bold; margin: 0; color: {score_color};">
-                                    {kpi1['Score']}
-                                </p>
-                                <p style="font-size: 14px; font-weight: bold; margin: 5px 0; color: {score_color};">
-                                    {kpi1['KPI']}
-                                </p>
-                                <p style="margin: 5px 0; font-size: 14px; color: #666;">
-                                    {kpi1['why']}
-                                </p>
-                            </div>""",
-                            unsafe_allow_html=True,
-                        )
-                    st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")
