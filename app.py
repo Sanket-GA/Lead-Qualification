@@ -149,6 +149,13 @@ def get_card_background_color(score):
 
 if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
     tab1,tab2,tab3=st.tabs(['Textual Summary',"Data","KPI Level"])
+    avg_score=sum([dict1["Score"] for dict1 in st.session_state['list_of_KPI']])/len(st.session_state['list_of_KPI'])
+    
+    col_b.markdown(f"**Lead Rating**   :: {round(avg_score,2)}")
+    if avg_score>=3:
+        col_b.markdown(f"**Lead Status** :: <span style='color: green; font-weight: bold;'>Accepted</span>", unsafe_allow_html=True)
+    else:
+        col_b.markdown(f"**Lead Status** :: <span style='color: red; font-weight: bold;'>Accepted</span>", unsafe_allow_html=True)
 
     # Section 1: Summarized Insights
     if selected_ticker == 'SMAR' :
@@ -159,8 +166,10 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                 "They have been receiving money from Convera. Based on the prediction and CLTV, they are in the must-reach-out segment, and we expect significant business benefits by converting them."
             )
         with tab2:
+            
             col10, col11 = st.columns(2)
             col10.write(f"**Fundamental of {selected_ticker}:**")
+          
             with col10:
                 by_the_numbers_data = pd.DataFrame({
                     "#Payments": [12],
@@ -169,17 +178,21 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                     "Time since last payment": ["45 days"],
                     "Fee USD": ["$1,500"]
                 })
-                st.dataframe(by_the_numbers_data, hide_index=True)
+                # styled_df = by_the_numbers_data.style.set_properties(**{'text-align': 'center'})
+                st.dataframe(by_the_numbers_data, hide_index=True,width=700 )
 
             # Section 3: Machine Learning Predictions
-            col11.write(f"**Fundamental of {selected_ticker}:**")
+            # col11.write(f"**Fundamental of {selected_ticker}:**")
+            
             with col11:
+                st.write("")
+                st.write("")
                 ml_predictions_data = pd.DataFrame({
                     "Lead Conversion Score": [90],
                     "Expected CLTV": ["$250,000"],
                     "Recommended Product": ["Enterprise Service Plan"]
                 })
-                st.dataframe(ml_predictions_data, hide_index=True)
+                st.dataframe(ml_predictions_data, hide_index=True,width=700)
 
             # Section 4: Secondary Research
             col21, col22 = st.columns(2)
@@ -191,7 +204,7 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                 "Share of Voice": ["20%"],
                 "Brand Sentiment": ["Positive"]
             })
-            col21.dataframe(secondary_research_data, hide_index=True)
+            col21.dataframe(secondary_research_data, hide_index=True,width=700  )
 
 
             # Section 5: Targeting Info
@@ -203,7 +216,7 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                 "Location": ["New York, USA", "London, UK"],
                 "Contact": ["johndoe@smartsheet.com", "janesmith@smartsheet.com"]
             })
-            col22.dataframe(targeting_info_data,hide_index=True)
+            col22.dataframe(targeting_info_data,hide_index=True,width=700 )
         col_b.write("**Headquarter:** Bellevue, Washington, USA")
         col_b.write("**Vendor Spend:** $3 Million")
 
@@ -219,7 +232,7 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
 
         # Section 2: By the Numbers
         with tab2:
-            st.subheader("By the Numbers")
+            st.markdown("By the Numbers")
             col1, col2 = st.columns(2)
             with col1:
                 by_the_numbers_data = pd.DataFrame({
@@ -238,11 +251,11 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                     "Expected CLTV": ["$1,000,000"],
                     "Recommended Product": ["AI Computing Solutions"]
                 })
-                st.dataframe(ml_predictions_data, hide_index=True)
+                st.dataframe(ml_predictions_data, hide_index=True,width=600)
 
             # Section 4: Secondary Research
             col21, col22 = st.columns(2)
-            col21.subheader("Secondary Research")
+            col21.markdown("**Secondary Research**")
             secondary_research_data = pd.DataFrame({
                 "Annual Sales/Revenue": ["$27 Billion"],
                 "Global Employee Count": ["22,000"],
@@ -261,7 +274,7 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                 "Location": ["Santa Clara, USA", "London, UK"],
                 "Contact": ["jhuang@nvidia.com", "janesmith@nvidia.com"]
             })
-            col22.dataframe(targeting_info_data, hide_index=True)
+            col22.dataframe(targeting_info_data, hide_index=True,width=600)
         col_b.write()
         col_b.write()
         col_b.write()
