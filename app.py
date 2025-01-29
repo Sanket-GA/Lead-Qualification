@@ -314,7 +314,7 @@ if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
                             )
                         st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
             else:
-                st.info("No KPIs belong to the this category.")  
+                st.info("No KPIs belong to this category.")  
 
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")
