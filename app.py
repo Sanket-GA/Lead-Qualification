@@ -33,6 +33,9 @@ if "summary" not in st.session_state:
 if "recommendation" not in st.session_state:
     st.session_state.recommendation=None
 
+if "kpi_flag" not in st.session_state:
+    st.session_state.kpi_flag=None
+
 
 col_s, col_b = st.columns([1, 3])  # Adjust the width ratio
 
@@ -60,6 +63,7 @@ button=col_s.button("Start")
 
 
 if button:
+    st.session_state.kpi_flag=selected_ticker
     kpi_tracker = FinancialKPIs(selected_ticker)
     financial_details=kpi_tracker.get_all()
     financial_details2=data_preprocessing(financial_details)
@@ -140,11 +144,11 @@ def get_card_background_color(score):
 
 
 
-if st.session_state['summary']:
+if st.session_state['summary'] and st.session_state.kpi_flag==selected_ticker:
     tab1,tab2,tab3=st.tabs(['Textual Summary',"Data","KPI Level"])
 
     # Section 1: Summarized Insights
-    if selected_ticker == 'SMAR':
+    if selected_ticker == 'SMAR' :
         with tab1:
             st.markdown(f"##### About the {selected_ticker}")
             st.write(
@@ -309,3 +313,5 @@ if st.session_state['summary']:
                             unsafe_allow_html=True,
                         )
                     st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
+else:
+    st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")

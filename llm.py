@@ -20,7 +20,7 @@ def one_limit_call(prompt_):
             messages=[
                 {'role': 'system', 'content': 'You are a helpful assistant expert in analyzing the company financial data.'},
                 {"role": "user", "content": prompt_}
-            ]
+            ],
         )
         usage = {
             "prompt_tokens": completion.usage.prompt_tokens,
