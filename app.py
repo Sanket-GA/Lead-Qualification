@@ -37,7 +37,7 @@ if "kpi_flag" not in st.session_state:
     st.session_state.kpi_flag=None
 
 
-col_s, col_b = st.columns([1, 3])  # Adjust the width ratio
+col_s, col_b = st.columns([1, 3],gap="medium")  # Adjust the width ratio
 
 
 col_s.markdown(
