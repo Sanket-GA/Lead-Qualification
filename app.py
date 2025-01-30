@@ -55,7 +55,7 @@ if "final_data" not in st.session_state:
     st.session_state.final_data=None
 
 
-col_s, col_b ,col_i= st.columns([1, 2, 2],gap="medium")  # Adjust the width ratio
+col_s, col_b ,col_i= st.columns([1, 2, 2],gap="large")  # Adjust the width ratio
 
 
 
