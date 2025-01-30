@@ -15,7 +15,7 @@ def one_limit_call(prompt_):
     try:
         # Create completion request
         completion = client.chat.completions.create(
-            model="gpt-4o-merc",
+            model=st.secrets.azure.model or os.getenv('model'),
             temperature=0,
             messages=[
                 {'role': 'system', 'content': 'You are a helpful assistant expert in finding and analyzing the company financial data.'},
