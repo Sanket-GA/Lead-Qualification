@@ -219,7 +219,7 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
 
     with tab1:
         if st.session_state.About:
-            st.markdown(f"#### About {selected_ticker}:")
+            st.markdown(f"#### About")
             st.markdown(st.session_state.About)
 
         if st.session_state['Summary']:
