@@ -24,29 +24,32 @@ class WebSearch():
         text_docs=[]
         for url in search_urls:
             print(url)
-#             try:
             if url.endswith(".pdf"):
-                headers = {'User-Agent': 'Mozilla/5.0 (X11; Windows; Windows x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36'}
-                # Fetch the PDF and load it into memory
-                response = requests.get(url=url, headers=headers, timeout=120)
-                # Load the PDF into a BytesIO object
-                on_fly_mem_obj = io.BytesIO(response.content)
-                pdf_reader = PdfReader(on_fly_mem_obj)
-                # Extract text from each page
-                pdf_text = ""
-                for page in pdf_reader.pages:
-                    pdf_text += page.extract_text() + "\n"
-                # Store the extracted text
-                text_docs.append([{"file_name": url, "content": pdf_text}])
+                try:
+                    headers = {'User-Agent': 'Mozilla/5.0 (X11; Windows; Windows x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.114 Safari/537.36'}
+                    # Fetch the PDF and load it into memory
+                    response = requests.get(url=url, headers=headers, timeout=30)
+                    # Load the PDF into a BytesIO object
+                    on_fly_mem_obj = io.BytesIO(response.content)
+                    pdf_reader = PdfReader(on_fly_mem_obj)
+                    # Extract text from each page
+                    pdf_text = ""
+                    for page in pdf_reader.pages:
+                        pdf_text += page.extract_text() + "\n"
+                    # Store the extracted text
+                    text_docs.append([{"file_name": url, "content": pdf_text}])
+                except:
+                    print("Url Not process ::",url)
             else:
-                loader = AsyncHtmlLoader([url])
-                docs = loader.load()
-                html2text = Html2TextTransformer()
-                docs_transformed = html2text.transform_documents(docs)
-                print(docs_transformed)
-                text_docs.append(docs_transformed)
-#             except:
-#                 pass
+                try:
+                    loader = AsyncHtmlLoader([url])
+                    docs = loader.load()
+                    html2text = Html2TextTransformer()
+                    docs_transformed = html2text.transform_documents(docs)
+                    print(docs_transformed)
+                    text_docs.append(docs_transformed)
+                except:
+                    print("Url Not process ::",url)
         return text_docs
 
 

@@ -13,7 +13,7 @@ st.set_page_config(page_title="Lead Qualification Engine", layout="wide")
 
 st.markdown("""
 <div style='text-align: center;'>
-<h2 style='font-size: 70px;margin-top:-60px;padding-bottom:50px; font-family: Arial, sans-serif; 
+<h2 style='font-size: 50px;margin-top:-60px;padding-bottom:50px; font-family: Arial, sans-serif; 
                    letter-spacing: 2px; text-decoration: none;'>
 <a href='https://affine.ai/' target='_blank' rel='noopener noreferrer'
                style='background: linear-gradient(45deg, #ed4965, #c05aaf);
@@ -22,9 +22,21 @@ st.markdown("""
                       text-shadow: none; text-decoration: none;'>
                Lead Qualification Engine
 </a>
+</span>
+        <span style='font-size: 40%;'>
+        <sup style='position: relative; top: 5px; background: linear-gradient(45deg, #ed4965, #c05aaf); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'></sup> 
+        </span>
 </h2>
 </div>
 """, unsafe_allow_html=True)
+
+st.markdown("""<div style='text-align: left; margin-top:-100px;margin-left:-60px;'>
+        <img src="https://affine.ai/wp-content/uploads/2024/06/logo.png" alt="logo" width="150" height="30">
+        </div>""", unsafe_allow_html=True)
+
+st.markdown("""<div style='text-align: left; margin-top:-110px;margin-left:1200px;'>
+        <img src="https://cdn.cookielaw.org/logos/c605ae6f-7e1d-4c58-b524-99c2677f9cfa/4b9d194d-c494-4a03-b3f8-9087c9235c85/851e6a4f-b205-4355-bcfb-c338c27ffc5c/logo-dark@2x.png" alt="logo" width="150" height="30">
+        </div>""", unsafe_allow_html=True)
 
 ## Session state
 if "list_of_KPI" not in st.session_state:
@@ -43,17 +55,26 @@ if "final_data" not in st.session_state:
     st.session_state.final_data=None
 
 
-col_s, col_b ,col_i= st.columns([2, 3, 1],gap="medium")  # Adjust the width ratio
+col_s, col_b ,col_i= st.columns([1, 2, 2],gap="medium")  # Adjust the width ratio
 
 
 
-selected_ticker=col_s.selectbox("Select the Payee ::", ['BREVILLE CANADA, L.P.', 'TRUSTLY GROUP AB','MANULIFE FINANCIAL',"UNIVERSITY HEALTH NETWORK","Cenovus Energy Inc."])
+selected_ticker=col_s.selectbox("Select the Payee ::", ['BREVILLE CANADA, L.P.',"Cenovus Energy Inc.", 'TRUSTLY GROUP AB','MANULIFE FINANCIAL',"UNIVERSITY HEALTH NETWORK"])
 button=col_s.button("Start")
 
-# if selected_ticker=="NVDA":
-#     col_i.image("data:image/png;base64,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")
-# else:
-#     col_i.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUpFnBUSXL5obSOxgPEquMFg1a4PrU-aF0xg&s")
+if selected_ticker=="BREVILLE CANADA, L.P.":
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF2AfxH1JnJZGT9rtN6nu3pg9pVoZUMwmDvg&s")
+elif selected_ticker=="TRUSTLY GROUP AB":
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1L1bIlcgPz2dG8dgbkwYWkk30PsJcVGejg&s")
+elif selected_ticker=="MANULIFE FINANCIAL":
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkdUgUPjXQkcvq_ZvrOgoH0G70kj64IVZyVQ&s")
+elif selected_ticker=="UNIVERSITY HEALTH NETWORK":
+    col_b.image("https://s3-eu-west-1.amazonaws.com/assets.in-part.com/universities/121/d7SK72jRvKuJkx50k0Tz_UHN-logo-new.png")
+elif selected_ticker=="Cenovus Energy Inc.":
+    col_b.image("https://cdn.cookielaw.org/logos/f9494f49-e682-408b-a250-2617c7517ebd/82a6d757-3704-4928-9049-9f920887f23c/34911ca0-0234-4f94-af80-9b3f9d921667/2021-CVE-Logo-RGB.png",width=200)
+    # col_i.divider()
+
+    # 
 
 if button:
     if st.session_state.final_data==None:
@@ -186,10 +207,19 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
     # print("overall_score ::",int(overall_score))
     overall_score=st.session_state.Overall_Recommendation_Score.replace("/10","")
     gauge_chart = create_gauge_chart(int(overall_score))
-    col_b.plotly_chart(gauge_chart)
+    col_i.plotly_chart(gauge_chart)
+
+    with col_b:
+        company_name=st.session_state.Company_Details['company_name']
+        Address=st.session_state.Company_Details['Address']
+        company_url=st.session_state.Company_Details['company url']
+        st.markdown(f"**Company Name** :: {company_name}")
+        st.markdown(f"**Address** :: {Address}")
+        st.markdown(f"**Website** :: {company_url}")
 
     with tab1:
         if st.session_state.About:
+            st.markdown(f"#### About {selected_ticker}:")
             st.markdown(st.session_state.About)
 
         if st.session_state['Summary']:
@@ -207,16 +237,44 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
         select_company=Payee_transactions_data[st.session_state.kpi_flag]
         st.markdown("**Customer Transaction History**")
         st.dataframe(select_company,width=800)
+        st.markdown("**Key Decision Makers**")
+        executive_team_list=st.session_state.Company_Details['executive_team']
+        st.dataframe(executive_team_list,width=800)
 
     with tab3:
-        if st.session_state['list_of_KPI']:
-            st.dataframe(st.session_state.list_of_KPI,
-             width=1400, 
-            column_config={
-        "KPI Name": st.column_config.TextColumn(width="200px"),
-        "Value": st.column_config.NumberColumn(width="150px"),
-        "Growth (%)": st.column_config.NumberColumn(width="1500px"),},
-           )
+        # if st.session_state['list_of_KPI']:
+        #     st.dataframe(st.session_state.list_of_KPI,
+        #      width=1400, 
+        #     column_config={
+        # "KPI Name": st.column_config.TextColumn(width="200px"),
+        # "Value": st.column_config.NumberColumn(width="150px"),
+        # "Growth (%)": st.column_config.NumberColumn(width="1500px"),},
+        #    )
+        if len(st.session_state.list_of_KPI):
+                for i in range(0, len(st.session_state.list_of_KPI), num_of_cols):
+                    # Create a row with `num_of_cols` columns
+                    cols = st.columns(num_of_cols)
+                    st.markdown("<div style='margin-bottom: 20px;'>", unsafe_allow_html=True)
+                    for j, kpi1 in enumerate(st.session_state.list_of_KPI[i:i + num_of_cols]):
+                        score_color = get_score_color(kpi1['Score'])
+                        card_bg_color = get_card_background_color(kpi1['Score'])
+                        with cols[j]:
+                            st.write(
+                                f"""<div style='padding: 10px; border: 1px solid #ddd; border-radius: 8px; 
+                                    height: 220px; overflow-y: auto; background-color: {card_bg_color};'>
+                                    <p style="font-size: 18px; font-weight: bold; margin: 0; color: {score_color};">
+                                        {kpi1['Score']}
+                                    </p>
+                                    <p style="font-size: 14px; font-weight: bold; margin: 5px 0; color: {score_color};">
+                                        {kpi1['KPI']}
+                                    </p>
+                                    <p style="margin: 5px 0; font-size: 14px; color: #666;">
+                                        {kpi1['why']}
+                                    </p>
+                                </div>""",
+                                unsafe_allow_html=True,
+                            )
+                        st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
 
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")
