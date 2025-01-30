@@ -63,13 +63,13 @@ selected_ticker=col_s.selectbox("Select the Payee ::", ['BREVILLE CANADA, L.P.',
 button=col_s.button("Start")
 
 if selected_ticker=="BREVILLE CANADA, L.P.":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF2AfxH1JnJZGT9rtN6nu3pg9pVoZUMwmDvg&s")
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF2AfxH1JnJZGT9rtN6nu3pg9pVoZUMwmDvg&s",width=200)
 elif selected_ticker=="TRUSTLY GROUP AB":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1L1bIlcgPz2dG8dgbkwYWkk30PsJcVGejg&s")
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1L1bIlcgPz2dG8dgbkwYWkk30PsJcVGejg&s",width=200)
 elif selected_ticker=="MANULIFE FINANCIAL":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkdUgUPjXQkcvq_ZvrOgoH0G70kj64IVZyVQ&s")
+    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkdUgUPjXQkcvq_ZvrOgoH0G70kj64IVZyVQ&s",width=200)
 elif selected_ticker=="UNIVERSITY HEALTH NETWORK":
-    col_b.image("https://s3-eu-west-1.amazonaws.com/assets.in-part.com/universities/121/d7SK72jRvKuJkx50k0Tz_UHN-logo-new.png")
+    col_b.image("https://s3-eu-west-1.amazonaws.com/assets.in-part.com/universities/121/d7SK72jRvKuJkx50k0Tz_UHN-logo-new.png",width=200)
 elif selected_ticker=="Cenovus Energy Inc.":
     col_b.image("https://cdn.cookielaw.org/logos/f9494f49-e682-408b-a250-2617c7517ebd/82a6d757-3704-4928-9049-9f920887f23c/34911ca0-0234-4f94-af80-9b3f9d921667/2021-CVE-Logo-RGB.png",width=200)
     # col_i.divider()
