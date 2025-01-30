@@ -15,10 +15,10 @@ def one_limit_call(prompt_):
     try:
         # Create completion request
         completion = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-merc",
             temperature=0,
             messages=[
-                {'role': 'system', 'content': 'You are a helpful assistant expert in analyzing the company financial data.'},
+                {'role': 'system', 'content': 'You are a helpful assistant expert in finding and analyzing the company financial data.'},
                 {"role": "user", "content": prompt_}
             ],
         )
