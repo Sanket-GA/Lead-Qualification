@@ -221,7 +221,7 @@ def get_card_background_color(score):
 import streamlit as st
 
 # Function to create a styled card
-def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='400px', height='400px'):
+def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='300px', height='300px'):
     st.markdown(
         f"""
         <div style="
@@ -230,6 +230,7 @@ def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 15px;
+            margin-right: 50px;
             width: {width};
             height: {height};">
             <h3 style="color: #333;">{name}</h3>
