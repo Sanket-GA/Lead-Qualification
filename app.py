@@ -298,7 +298,7 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
         st.markdown("**Customer Transaction History**")
         st.dataframe(select_company,width=1600)
         st.markdown("**Key Decision Makers**")
-        cols = st.columns(4)
+        cols = st.columns(4,gap="large")
         for i,data in enumerate(executives_list):
             with cols[i]:
                 profile_card(**data)
