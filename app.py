@@ -152,7 +152,7 @@ f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
     st.session_state.Recommendation=final_response['Recommendation']
     st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
 
-    query=f"Who are the key executives (CEO, CFO, leadership team) at {selected_ticker}? Provide their company website, LinkedIn profile of company and leadership team."
+    query=f"Who are the key executives CEO, CFO LinkedIn at {selected_ticker}? Provide their company website, LinkedIn profile of company and leadership team."
     obj=WebSearch()
     text_docs_list=obj.fecth_text(query)
     st.session_state.org_data=data_org_preprocessing(selected_ticker,text_docs_list)
