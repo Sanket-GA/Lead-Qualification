@@ -296,7 +296,7 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
     with tab2:
         select_company= st.session_state.df.loc[ st.session_state.df['PAYEENAME']==st.session_state.kpi_flag]
         st.markdown("**Customer Transaction History**")
-        st.dataframe(select_company,width=1600)
+        st.dataframe(select_company,width=1300)
         st.markdown("**Key Decision Makers**")
         cols = st.columns(4,gap="large")
         for i,data in enumerate(executives_list):
