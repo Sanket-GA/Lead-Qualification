@@ -221,7 +221,7 @@ def get_card_background_color(score):
 import streamlit as st
 
 # Function to create a styled card
-def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='300px', height='300px'):
+def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='400px', height='400px'):
     st.markdown(
         f"""
         <div style="
@@ -299,7 +299,7 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
         st.markdown("**Customer Transaction History**")
         st.dataframe(select_company,width=1300)
         st.markdown("**Key Decision Makers**")
-        cols = st.columns(4,gap="large")
+        cols = st.columns(3,gap="large")
         for i,data in enumerate(executives_list):
             with cols[i]:
                 profile_card(**data)
