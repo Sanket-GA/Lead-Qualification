@@ -1,5 +1,5 @@
 import streamlit as st
-from utility_v2 import WebSearch,data_preprocessing,get_prompt,create_gauge_chart
+from utility_v2 import WebSearch,data_financial_preprocessing,data_org_preprocessing,create_gauge_chart
 from llm import one_limit_call
 from ast import literal_eval
 from streamlit_card import card
@@ -8,6 +8,7 @@ from openai import AzureOpenAI
 from dotenv import load_dotenv
 import os
 import streamlit as st
+import pandas as pd
 
 st.set_page_config(page_title="Lead Qualification Engine", layout="wide")
 
@@ -51,15 +52,31 @@ if "Recommendation" not in st.session_state:
 if "kpi_flag" not in st.session_state:
     st.session_state.kpi_flag=None
 
-if "final_data" not in st.session_state:
-    st.session_state.final_data=None
+if "financial_data" not in st.session_state:
+    st.session_state.financial_data=None
+
+if "org_data" not in st.session_state:
+    st.session_state.org_data=None
+
+if "org_response" not in st.session_state:
+    st.session_state.org_response=None
+
+if "df" not in st.session_state:
+    st.session_state.df=None
+
+if "df_flag" not in st.session_state:
+    st.session_state.df_flag=None
 
 
 col_s, col_b ,col_i= st.columns([1, 2, 2],gap="large")  # Adjust the width ratio
 
+if st.session_state.df_flag==None:
+    st.session_state.df=pd.read_excel("payee_details.xlsx",sheet_name="Sheet1")
+    st.session_state.df_flag=True
 
+payee_name_list=st.session_state.df['PAYEENAME'].to_list()
 
-selected_ticker=col_s.selectbox("Select the Payee ::", ['BREVILLE CANADA, L.P.',"Cenovus Energy Inc.", 'TRUSTLY GROUP AB','MANULIFE FINANCIAL',"UNIVERSITY HEALTH NETWORK"])
+selected_ticker=col_s.selectbox("Select the Payee ::",payee_name_list)
 button=col_s.button("Start")
 
 if selected_ticker=="BREVILLE CANADA, L.P.":
@@ -77,28 +94,26 @@ elif selected_ticker=="Cenovus Energy Inc.":
     # 
 
 if button:
-    if st.session_state.final_data==None:
+    if st.session_state.financial_data==None:
         st.session_state.kpi_flag=selected_ticker
         query=f"what is the revenue growth of {selected_ticker} news, reports"
         obj=WebSearch()
         text_docs_list=obj.fecth_text(query)
 
-        final_data=data_preprocessing(text_docs_list)
-        st.session_state.final_data=final_data
+        st.session_state.financial_data=data_financial_preprocessing(selected_ticker,text_docs_list)
 
-    prompt_="""You are an expert assistant specializing in financial data analysis and lead qualification. Your primary task is to evaluate provided financial and other data from the current and past years to determine the qualification of potential payee customers. You are working for global leader to managing payments, cash flow, and risk.
-Use your expertise to determine whether the payee customer qualifies as a potential customer based on their financial information and stability and risk profile.
-
+    financial_prompt_=f"""You are an expert assistant specializing in financial data analysis and lead qualification. Your primary task is to summarize and evaluate provided financial and other data from the current and past years of {selected_ticker} company to determine the qualification of potential payee customers. Use your expertise to determine whether the payee customer qualifies as a potential customer based on their financial information and stability and risk profile.
 
 Below is the key guidelines for defining company performance:
-1. Assess financial data over multiple years to identify consistent stability and growth trends.
-2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.
+1. Assess and Summarize financial data over multiple years to identify consistent stability and growth trends.
+2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.   
 3. Determine the customer's financial risk profile by examining key financial indicators and metrics.
 4. Ensure that the customer meets established thresholds for financial stability and operational efficiency.
 5. Use a data-driven approach to identify customers that align with the company's long-term payment management objectives.
 6. Always perform a thorough analysis of 5-6 important metrics to maintain comprehensive evaluation standards.
 7. Highlight key strengths and weaknesses by analyzing the KPI data, focusing on growth, cash flow, profitability, and any identified risks to provide a balanced overview.
 8. Based on the analysis, determine whether the payee customer qualifies, ensuring to include considerations for monitoring critical metrics and addressing potential risks.
+9. Ensure that all analysis is relevant and accurate, strictly based on the provided context for {selected_ticker}. Do not include any incorrect details or information about any other company.
 
 Scoring Guidelines
 To assign a score between 1-5 based on performance, you can use the following steps:
@@ -115,28 +130,71 @@ To assign a score between 1-5 based on performance, you can use the following st
 Consider the following key point to structure the output and The output should be in following format:
 Extract the following information in below list if available otherwise "N/A"
 
-```{{"About":,'<Provide a brief overview of the company's details(Domain, foundation year etc.) in 1-3 lines.>',
-"Fundamental_KPI":[{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }]}},
-"Company Details":{"company_name":<name of company>,"Address":<address of company>,"company url":<company website url>,"executive_team":[{"name":<name>,"email":<email>,"position":<position>}]},
-"Summary":{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
+```{{"About":,'<Provide a brief overview of the company's details(company name, Domain, foundation year etc.) in 1-3 lines.>',
+"Fundamental_KPI":[{{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }}],
+"Summary":{{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
 "Weaknesses":'<Assess areas where the performance lags, focusing on inefficiencies>',
-"Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>},
+"Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>}},
 "Recommendation":<Base recommendations on a comprehensive analysis of the data, emphasizing whether the payee customer qualifies based on their financial stability, growth potential, and alignment with the company's risk tolerance.>,
 "Overall Recommendation Score":'<Assign a score between 1-10 based on the payee customer's financial stability, growth potential, and alignment with the company's risk tolerance.>'
 }}```
 """+\
-f"""Here is the data of payee customers :: \n {st.session_state.final_data}
+f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
 """
-    ans,usage=one_limit_call(prompt_)
+    ans,usage=one_limit_call(financial_prompt_)
     print("------------------------final Response-----------------------")
     print(ans)
     final_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
     st.session_state.list_of_KPI=final_response['Fundamental_KPI']
     st.session_state.About=final_response['About']
-    st.session_state.Company_Details=final_response['Company Details']
+    # st.session_state.Company_Details=final_response['Company Details']
     st.session_state.Summary=final_response['Summary']
     st.session_state.Recommendation=final_response['Recommendation']
     st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
+
+    query=f"Who are the key executives (CEO, CFO, leadership team) at {selected_ticker}? Provide their company website, LinkedIn profile of company and leadership team."
+    obj=WebSearch()
+    text_docs_list=obj.fecth_text(query)
+    st.session_state.org_data=data_org_preprocessing(selected_ticker,text_docs_list)
+
+    org_prompt_=f"""You are an expert in corporate structures, specializing in identifying decision-making hierarchies within organizations. Your task is to extract, validate, and summarize relevant executive and company details for {selected_ticker}.  
+
+### Guidelines for Data Extraction and Summarization:
+1. Collect and validate structured data from multiple web sources, including the official website, LinkedIn, Bloomberg, and other credible business directories.  
+2. Ensure extracted details are 'specific to {selected_ticker}' only—avoid incorrect or unrelated company data.  
+3. Include the company's founding year, key milestones, and executive leadership details (CEO, CFO, and key decision-makers).  
+4. Extract tenure, past experience, achievements, and LinkedIn profiles of executives.  
+5. Always return the LinkedIn url from source of document.
+6. Prioritize verified and up-to-date information. If no relevant details are found, return `"NA"`.  
+7. Ensure accuracy and consistency across different sources before structuring the final output.  
+
+### Output Format (JSON Only)
+The final response must follow the JSON structure below:  
+sample example: ```json  
+{{
+  "company_name": "Example Inc.",
+  "company_website": "https://www.example.com/",
+  "company_linkedin_profile": "https://www.linkedin.com/company/example/",
+  "founding_year": 1995,
+  "milestones": [
+    "2000: Expanded to global markets",
+    "2015: Launched AI-driven products",
+    "2023: IPO with $10 billion valuation"
+  ],
+  "executives": [
+    {{
+      "name": "John Doe",
+      "role": "Chief Executive Officer",
+      "tenure": "2018 - Present",
+      "past_experience": ["VP at XYZ Corp", "Director at ABC Ltd"],
+      "linkedin_profile": "https://www.linkedin.com/in/johndoe/",
+      "contact_email": "ceo@example.com"
+    }}
+  ]}}"""
+    ans,usage=one_limit_call(org_prompt_)
+    st.session_state.org_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
+    print("-------------------------org response-----------------------------------")
+    print(st.session_state.org_response)
 
 # Define the number of columns
 num_of_cols = 6
@@ -159,44 +217,37 @@ def get_card_background_color(score):
     else:
         return '#ffcccb'  # Light red
 
-Payee_transactions_data={
-  "BREVILLE CANADA, L.P.": {
-    "# Customers Transacting to":[ 2],
-    "# Transactions": [5],
-    "# Currencies Transacted": [1],
-    "Fee Amount":[ 20],
-    "Payment Amount":[ 3052105]
-  },
-  "TRUSTLY GROUP AB": {
-    "# Customers Transacting to": [1],
-    "# Transactions": [1],
-    "# Currencies Transacted": [1],
-    "Fee Amount": [2],
-    "Payment Amount": [1035186]
-  },
-  "MANULIFE FINANCIAL": {
-    "# Customers Transacting to": [3],
-    "# Transactions":[ 4],
-    "# Currencies Transacted": [1],
-    "Fee Amount": [6],
-    "Payment Amount": [307355]
-  },
-  "UNIVERSITY HEALTH NETWORK": {
-    "# Customers Transacting to":[ 3],
-    "# Transactions": [8],
-    "# Currencies Transacted": [1],
-    "Fee Amount": [30.75],
-    "Payment Amount": [126401]
-  },
-  "Cenovus Energy Inc.": {
-    "# Customers Transacting to":[ 1],
-    "# Transactions": [1],
-    "# Currencies Transacted": [1],
-    "Fee Amount": [15],
-    "Payment Amount": [1340342]
-  }
-}
 
+import streamlit as st
+
+# Function to create a styled card
+def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='400px', height='400px'):
+    st.markdown(
+        f"""
+        <div style="
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            width: {width};
+            height: {height};">
+            <h3 style="color: #333;">{name}</h3>
+            <p><strong>Role:</strong> {role}</p>
+            <p><strong>Tenure:</strong> {tenure}</p>
+            <p><strong>Past Experience:</strong></p>
+            <ul>
+                {''.join(f'<li>{exp}</li>' for exp in past_experience)}
+            </ul>
+            <p><strong>LinkedIn:</strong> <a href="{linkedin_profile}" target="_blank">Profile Link</a></p>
+            <p><strong>Contact:</strong> <a href="mailto:{contact_email}">{contact_email}</a></p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+Payee_transactions_data= st.session_state.df.loc[st.session_state.df['PAYEENAME']==st.session_state.kpi_flag]
 
 if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: # 
     tab1,tab2,tab3=st.tabs(['Textual Summary',"Data","KPI Level"])
@@ -210,12 +261,21 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
     col_i.plotly_chart(gauge_chart)
 
     with col_b:
-        company_name=st.session_state.Company_Details['company_name']
-        Address=st.session_state.Company_Details['Address']
-        company_url=st.session_state.Company_Details['company url']
+        pass
+        company_name=st.session_state.org_response['company_name'] #st.session_state.Company_Details['company_name']
+        # Address=st.session_state.Company_Details['Address']
+        company_linkedin_profile=st.session_state.org_response['company_linkedin_profile']
+        company_url=st.session_state.org_response['company_website']
+        founding_year=st.session_state.org_response['founding_year']
+        executives_list=st.session_state.org_response['executives']
         st.markdown(f"**Company Name** :: {company_name}")
-        st.markdown(f"**Address** :: {Address}")
+        st.markdown(f"**Linkedin Profile** :: {company_linkedin_profile}")
         st.markdown(f"**Website** :: {company_url}")
+        st.markdown(f"**Founding Year** :: {founding_year}")
+        
+        # for i in executives_list:
+        #     print("------------------------------------------------")
+        #     print(i)
 
     with tab1:
         if st.session_state.About:
@@ -234,12 +294,16 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
             st.markdown("#### Recommendation : \n"+st.session_state.Recommendation)
     
     with tab2:
-        select_company=Payee_transactions_data[st.session_state.kpi_flag]
+        select_company= st.session_state.df.loc[ st.session_state.df['PAYEENAME']==st.session_state.kpi_flag]
         st.markdown("**Customer Transaction History**")
-        st.dataframe(select_company,width=800)
+        st.dataframe(select_company,width=1600)
         st.markdown("**Key Decision Makers**")
-        executive_team_list=st.session_state.Company_Details['executive_team']
-        st.dataframe(executive_team_list,width=800)
+        cols = st.columns(4)
+        for i,data in enumerate(executives_list):
+            with cols[i]:
+                profile_card(**data)
+        # executive_team_list=st.session_state.Company_Details['executive_team']
+        # st.dataframe(executive_team_list,width=800)
 
     with tab3:
         # if st.session_state['list_of_KPI']:
