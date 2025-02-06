@@ -345,14 +345,15 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
                         st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
     with tab4:
         for news in st.session_state.news_data:
-            # st.write(news)
             if type(news)==dict:
                 pass
             else:
                 metadata=news[0].metadata
-                if "title" in metadata.keys() and "description" in metadata.keys() and "source" in metadata.keys():
+                # st.write(metadata)
+                if "title" in metadata.keys() and "source" in metadata.keys():
                     st.markdown(f"**{metadata['title'].strip()}**")
-                    st.markdown( metadata['description'])
+                    if "description" in metadata.keys():
+                        st.markdown( metadata['description'])
                     st.markdown( metadata['source'])
                     st.divider()
 
