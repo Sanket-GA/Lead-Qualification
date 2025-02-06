@@ -345,10 +345,16 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
                         st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
     with tab4:
         for news in st.session_state.news_data:
-            st.markdown(f"**{news[0].metadata['title'].strip()}**")
-            st.markdown( news[0].metadata['description'])
-            st.markdown( news[0].metadata['source'])
-            st.divider()
+            # st.write(news)
+            if type(news)==dict:
+                pass
+            else:
+                metadata=news[0].metadata
+                if "title" in metadata.keys() and "description" in metadata.keys() and "source" in metadata.keys():
+                    st.markdown(f"**{metadata['title'].strip()}**")
+                    st.markdown( metadata['description'])
+                    st.markdown( metadata['source'])
+                    st.divider()
 
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")
