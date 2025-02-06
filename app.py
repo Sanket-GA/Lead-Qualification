@@ -375,6 +375,8 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
             if "summary" in news.keys() and "source" in news.keys():
                 st.markdown(f"**{news['summary'].strip()}**")
                 st.markdown( news['source'])
+                st.divider()
+
 
         # for news in st.session_state.news_data:
         #     if type(news)==dict:
