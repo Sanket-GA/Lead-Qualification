@@ -1,5 +1,5 @@
 import streamlit as st
-from utility_v2 import WebSearch,data_financial_preprocessing,data_org_preprocessing,create_gauge_chart
+from utility_v2 import WebSearch,data_financial_preprocessing,data_org_preprocessing,create_gauge_chart,get_summary_prompt
 from llm import one_limit_call
 from ast import literal_eval
 from streamlit_card import card
@@ -192,9 +192,36 @@ if button:
     st.session_state.org_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
     print("-------------------------org response-----------------------------------")
     print(st.session_state.org_response)
-    query=f"latest financial news on {selected_ticker}"
+
+    query=f"latest financial updates, earnings reports, stock performance, and market analysis for {selected_ticker}"
     obj=WebSearch()
-    st.session_state.news_data=obj.fecth_text(query)
+    news_data=obj.fecth_text(query,top_n=10)
+    # st.session_state.
+    st.session_state.news_summerize_list=[]
+    for i,doc in enumerate(news_data):
+        if 'content' in news_data[i][0]:
+            # print("-------------------summary context--------------------------")
+            context=news_data[i][0]["content"]
+            # print(context)
+            source=news_data[i][0]["source"]
+            prompt_=get_summary_prompt(query,context)
+            extracted_data,usage=one_limit_call(prompt_)
+            print("----------------------Summary----------------------")
+            print(extracted_data)
+            if "NA" not in extracted_data:
+                st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
+        else:
+            # print("-------------------summary context--------------------------")
+            context=news_data[i][0].page_content
+            # print(context)
+            source=news_data[i][0].metadata["source"]
+            prompt_=get_summary_prompt(query,context)
+            extracted_data,usage=one_limit_call(prompt_)
+            print("----------------------Summary----------------------")
+            print(extracted_data)
+            if "NA" not in extracted_data:
+                st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
+        
 
 
 
@@ -344,18 +371,23 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
                             )
                         st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
     with tab4:
-        for news in st.session_state.news_data:
-            if type(news)==dict:
-                pass
-            else:
-                metadata=news[0].metadata
-                # st.write(metadata)
-                if "title" in metadata.keys() and "source" in metadata.keys():
-                    st.markdown(f"**{metadata['title'].strip()}**")
-                    if "description" in metadata.keys():
-                        st.markdown( metadata['description'])
-                    st.markdown( metadata['source'])
-                    st.divider()
+        for news in st.session_state.news_summerize_list:
+            if "summary" in news.keys() and "source" in news.keys():
+                st.markdown(f"**{news['summary'].strip()}**")
+                st.markdown( news['source'])
+
+        # for news in st.session_state.news_data:
+        #     if type(news)==dict:
+        #         pass
+        #     else:
+        #         metadata=news[0].metadata
+        #         # st.write(metadata)
+        #         if "title" in metadata.keys() and "source" in metadata.keys():
+        #             st.markdown(f"**{metadata['title'].strip()}**")
+        #             if "description" in metadata.keys():
+        #                 st.markdown( metadata['description'])
+        #             st.markdown( metadata['source'])
+        #             st.divider()
 
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")

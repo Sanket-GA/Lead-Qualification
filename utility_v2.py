@@ -15,15 +15,15 @@ class WebSearch():
     def __init__(self):
         pass
     
-    def do_search(self,query,top_n=5):
-        search_url_obj=search(query, tld = "co.in", num = top_n , stop = 5, pause = 2)
+    def do_search(self,query,top_n):
+        search_url_obj=search(query, tld = "co.in", num = top_n , stop = top_n, pause = 2)
 #         search_urls=[link for link in search_url_obj]
         search_urls=[link for link in search_url_obj if "ambitionbox" not in link]
         print("search_urls ::",search_urls)
         return search_urls
     
-    def fecth_text(self,query):
-        search_urls=self.do_search(query,top_n=5)
+    def fecth_text(self,query,top_n=5):
+        search_urls=self.do_search(query,top_n=top_n)
         text_docs=[]
         for url in search_urls:
             print("Url is processing:",url)
@@ -142,6 +142,16 @@ def get_org_prompt(target_company,context):
     return prompt_
 
 
+def get_summary_prompt(topic,context):
+    prompt_ = f"""
+You are a summary generator. Please generate a concise summary (50-100 words) based on the following topic and customer data.
+If there is no relevant information in the news data, return "NA."
+
+Topic: {topic}  
+news data: {context}  
+Summary:
+"""
+    return prompt_
 
 
 def create_gauge_chart(score):
