@@ -83,13 +83,13 @@ def data_org_preprocessing(target_company,text_docs_list):
             context=text_docs_list[i][0]
             prompt_=get_org_prompt(target_company,context)
             extracted_data,usage=one_limit_call(prompt_)
-            # print(extracted_data)
+            print(extracted_data)
             final_summerize_response.append(extracted_data)
         else:
             context=text_docs_list[i][0]
             prompt_=get_org_prompt(target_company,context)
             extracted_data,usage=one_limit_call(prompt_)
-            # print(extracted_data)
+            print(extracted_data)
             final_summerize_response.append(extracted_data)
     final_data='\n\n'.join(final_summerize_response)
     return final_data
@@ -120,30 +120,23 @@ def get_org_prompt(target_company,context):
     2. Look for founding year, milestones.
     3. Extract from the official website, LinkedIn.
     4. Use LinkedIn, Bloomberg and official websites to verify CEO, CFO and executive team details.
-    5. Always return the LinkedIn url from source of document.
-    5. Include tenure, past experience, and notable achievements of leaders.
-    6. No any relevant information found return 'NA'.
-    7. Ensure that all extracted information is relevant and accurate, strictly based on the provided context for {target_company}. Do not include any incorrect details or information about any other company.
+    5. Extract the LinkedIn URL from the `source` field in the document. If the `source` contains a LinkedIn URL (e.g., it includes "linkedin.com"), return the full URL; otherwise, return `None`.
+    6. Include tenure, past experience, and notable achievements of leaders.
+    7. No any relevant information found return 'NA'.
+    8. Ensure that all extracted information is relevant and accurate, strictly based on the provided context for {target_company}. Do not include any incorrect details or information about any other company.
 
     company_context:{context} """+\
     """Below is a sample example of the final output:
-    ```{"company_name":"Tesla, Inc.",
-  "company_website": "https://www.tesla.com/",
-  "company_linkedin_profile": "https://www.linkedin.com/company/tesla-india/",
-  "founding_year": 2003,
-  "milestones": [
-    "2008: Launch of Tesla Roadster",
-    "2015: Introduction of Autopilot",
-    "2020: Market value exceeds $1 trillion"],
-  "executives": [
-    {
-      "name": "Elon Musk",
-      "role": "Chief Executive Officer",
-      "tenure": "2008 - Present",
-      "past_experience": ["Founder at SpaceX","Co-founder at PayPal" ],
-      "linkedin_profile": "https://www.linkedin.com/in/elonmusk/",
-      "contact_email": "contact@tesla.com"
-    }]}```
+    ```{{"company_name": "<company_name>",
+  "company_website": "<company_website>",
+  "company_linkedin_profile": "<company_linkedin_profile>",
+  "founding_year": "<founding_year>",
+  "executives": [{{
+      "name": "<executive_name>",
+      "role": "<executive_role>",
+      "tenure": "<executive_tenure>",
+       "linkedin_profile": "<linkedin_profile_url>",
+       "contact_email": "<office_email>"}}]}}```
     final output shoud be in JSON format only:
     response: """
     return prompt_

@@ -10,8 +10,8 @@ import os
 import streamlit as st
 import pandas as pd
 
+## Streamlit Header
 st.set_page_config(page_title="Lead Qualification Engine", layout="wide")
-
 st.markdown("""
 <div style='text-align: center;'>
 <h2 style='font-size: 50px;margin-top:-60px;padding-bottom:50px; font-family: Arial, sans-serif; 
@@ -67,6 +67,9 @@ if "df" not in st.session_state:
 if "df_flag" not in st.session_state:
     st.session_state.df_flag=None
 
+if "news_data" not in st.session_state:
+    st.session_state.news_data=None
+
 
 col_s, col_b ,col_i= st.columns([1, 2, 2],gap="large")  # Adjust the width ratio
 
@@ -104,43 +107,43 @@ if button:
 
     financial_prompt_=f"""You are an expert assistant specializing in financial data analysis and lead qualification. Your primary task is to summarize and evaluate provided financial and other data from the current and past years of {selected_ticker} company to determine the qualification of potential payee customers. Use your expertise to determine whether the payee customer qualifies as a potential customer based on their financial information and stability and risk profile.
 
-Below is the key guidelines for defining company performance:
-1. Assess and Summarize financial data over multiple years to identify consistent stability and growth trends.
-2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.   
-3. Determine the customer's financial risk profile by examining key financial indicators and metrics.
-4. Ensure that the customer meets established thresholds for financial stability and operational efficiency.
-5. Use a data-driven approach to identify customers that align with the company's long-term payment management objectives.
-6. Always perform a thorough analysis of 5-6 important metrics to maintain comprehensive evaluation standards.
-7. Highlight key strengths and weaknesses by analyzing the KPI data, focusing on growth, cash flow, profitability, and any identified risks to provide a balanced overview.
-8. Based on the analysis, determine whether the payee customer qualifies, ensuring to include considerations for monitoring critical metrics and addressing potential risks.
-9. Ensure that all analysis is relevant and accurate, strictly based on the provided context for {selected_ticker}. Do not include any incorrect details or information about any other company.
+    Below is the key guidelines for defining company performance:
+    1. Assess and Summarize financial data over multiple years to identify consistent stability and growth trends.
+    2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.   
+    3. Determine the customer's financial risk profile by examining key financial indicators and metrics.
+    4. Ensure that the customer meets established thresholds for financial stability and operational efficiency.
+    5. Use a data-driven approach to identify customers that align with the company's long-term payment management objectives.
+    6. Always perform a thorough analysis of 5-6 important metrics to maintain comprehensive evaluation standards.
+    7. Highlight key strengths and weaknesses by analyzing the KPI data, focusing on growth, cash flow, profitability, and any identified risks to provide a balanced overview.
+    8. Based on the analysis, determine whether the payee customer qualifies, ensuring to include considerations for monitoring critical metrics and addressing potential risks.
+    9. Ensure that all analysis is relevant and accurate, strictly based on the provided context for {selected_ticker}. Do not include any incorrect details or information about any other company.
 
-Scoring Guidelines
-To assign a score between 1-5 based on performance, you can use the following steps:
-1. Define Performance Ranges:
-    1. (Poor): Below industry average, significant issues.
-    2. (Below Average): Slightly below industry average, some issues.
-    3. (Average): Meets industry average, stable performance.
-    4. (Above Average): Above industry average, strong performance.
-    5. (Excellent): Significantly above industry average, outstanding performance.
-2. Assign Scores to Each KPI:
-    1. Compare each KPI to industry benchmarks or historical performance.
-    2. Assign a score based on where the KPI falls within the defined ranges.
+    Scoring Guidelines
+    To assign a score between 1-5 based on performance, you can use the following steps:
+    1. Define Performance Ranges:
+        1. (Poor): Below industry average, significant issues.
+        2. (Below Average): Slightly below industry average, some issues.
+        3. (Average): Meets industry average, stable performance.
+        4. (Above Average): Above industry average, strong performance.
+        5. (Excellent): Significantly above industry average, outstanding performance.
+    2. Assign Scores to Each KPI:
+        1. Compare each KPI to industry benchmarks or historical performance.
+        2. Assign a score based on where the KPI falls within the defined ranges.
 
-Consider the following key point to structure the output and The output should be in following format:
-Extract the following information in below list if available otherwise "N/A"
+    Consider the following key point to structure the output and The output should be in following format:
+    Extract the following information in below list if available otherwise "N/A"
 
-```{{"About":,'<Provide a brief overview of the company's details(company name, Domain, foundation year etc.) in 1-3 lines.>',
-"Fundamental_KPI":[{{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }}],
-"Summary":{{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
-"Weaknesses":'<Assess areas where the performance lags, focusing on inefficiencies>',
-"Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>}},
-"Recommendation":<Base recommendations on a comprehensive analysis of the data, emphasizing whether the payee customer qualifies based on their financial stability, growth potential, and alignment with the company's risk tolerance.>,
-"Overall Recommendation Score":'<Assign a score between 1-10 based on the payee customer's financial stability, growth potential, and alignment with the company's risk tolerance.>'
-}}```
-"""+\
-f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
-"""
+    ```{{"About":,'<Provide a brief overview of the company's details(company name, Domain, foundation year etc.) in 1-3 lines.>',
+    "Fundamental_KPI":[{{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }}],
+    "Summary":{{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
+    "Weaknesses":'<Assess areas where the performance lags, focusing on inefficiencies>',
+    "Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>}},
+    "Recommendation":<Base recommendations on a comprehensive analysis of the data, emphasizing whether the payee customer qualifies based on their financial stability, growth potential, and alignment with the company's risk tolerance.>,
+    "Overall Recommendation Score":'<Assign a score between 1-10 based on the payee customer's financial stability, growth potential, and alignment with the company's risk tolerance.>'
+    }}```
+    """+\
+    f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
+    """
     ans,usage=one_limit_call(financial_prompt_)
     print("------------------------final Response-----------------------")
     print(ans)
@@ -152,49 +155,48 @@ f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
     st.session_state.Recommendation=final_response['Recommendation']
     st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
 
-    query=f"Who are the key executives CEO, CFO LinkedIn at {selected_ticker}? Provide their company website, LinkedIn profile of company and leadership team."
+    query=f"Find the LinkedIn profiles of the CEO, CTO, and key decision-makers at {selected_ticker}. Also, provide the company's official website and LinkedIn profile."
+
     obj=WebSearch()
     text_docs_list=obj.fecth_text(query)
     st.session_state.org_data=data_org_preprocessing(selected_ticker,text_docs_list)
 
     org_prompt_=f"""You are an expert in corporate structures, specializing in identifying decision-making hierarchies within organizations. Your task is to extract, validate, and summarize relevant executive and company details for {selected_ticker}.  
 
-### Guidelines for Data Extraction and Summarization:
-1. Collect and validate structured data from multiple web sources, including the official website, LinkedIn, Bloomberg, and other credible business directories.  
-2. Ensure extracted details are 'specific to {selected_ticker}' only—avoid incorrect or unrelated company data.  
-3. Include the company's founding year, key milestones, and executive leadership details (CEO, CFO, and key decision-makers).  
-4. Extract tenure, past experience, achievements, and LinkedIn profiles of executives.  
-5. Always return the LinkedIn url from source of document.
-6. Prioritize verified and up-to-date information. If no relevant details are found, return `"NA"`.  
-7. Ensure accuracy and consistency across different sources before structuring the final output.  
+    ## Guidelines for Data Extraction and Summarization:
+    1. Collect and validate structured data from multiple web sources, including the official website, LinkedIn, Bloomberg, and other credible business directories.  
+    2. Ensure extracted details are 'specific to {selected_ticker}' only—avoid incorrect or unrelated company data.  
+    3. Include the company's founding year, key milestones, and executive leadership details (CEO, CFO, and key decision-makers).  
+    4. Extract tenure, past experience, achievements, and LinkedIn profiles of executives.  
+    5. Always return the LinkedIn url from source of document.
+    6. Prioritize verified and up-to-date information. If no relevant details are found, return `"NA"`.  
+    7. Ensure accuracy and consistency across different sources before structuring the final output.  
 
-### Output Format (JSON Only)
-The final response must follow the JSON structure below:  
-sample example: ```json  
-{{
-  "company_name": "Example Inc.",
-  "company_website": "https://www.example.com/",
-  "company_linkedin_profile": "https://www.linkedin.com/company/example/",
-  "founding_year": 1995,
-  "milestones": [
-    "2000: Expanded to global markets",
-    "2015: Launched AI-driven products",
-    "2023: IPO with $10 billion valuation"
-  ],
-  "executives": [
-    {{
-      "name": "John Doe",
-      "role": "Chief Executive Officer",
-      "tenure": "2018 - Present",
-      "past_experience": ["VP at XYZ Corp", "Director at ABC Ltd"],
-      "linkedin_profile": "https://www.linkedin.com/in/johndoe/",
-      "contact_email": "ceo@example.com"
-    }}
-  ]}}"""
+    ## Here is the data of company data :: {st.session_state.org_data}
+
+    ## Output Format (JSON Only)
+    The final response must follow the JSON structure below:  
+    sample example: ```json {{
+    "company_name": "<company_name>",
+    "company_website": "<company_website>",
+    "company_linkedin_profile": "<company_linkedin_profile>",
+    "founding_year": "<founding_year>",
+    "executives": [{{
+        "name": "<executive_name>",
+        "role": "Chief Executive Officer",
+        "tenure": "<start_year> - Present",
+        "linkedin_profile": "<linkedin_profile_url>",
+        "contact_email": "<contact_email>"}}]}}"""
+
     ans,usage=one_limit_call(org_prompt_)
     st.session_state.org_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
     print("-------------------------org response-----------------------------------")
     print(st.session_state.org_response)
+    query=f"latest financial news on {selected_ticker}"
+    obj=WebSearch()
+    st.session_state.news_data=obj.fecth_text(query)
+
+
 
 # Define the number of columns
 num_of_cols = 6
@@ -221,7 +223,8 @@ def get_card_background_color(score):
 import streamlit as st
 
 # Function to create a styled card
-def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_email, width='400px', height='400px'):
+def profile_card(name, role, tenure, linkedin_profile, contact_email, width='400px', height='400px'):
+    past_experience=[""]
     st.markdown(
         f"""
         <div style="
@@ -251,7 +254,7 @@ def profile_card(name, role, tenure, past_experience, linkedin_profile, contact_
 Payee_transactions_data= st.session_state.df.loc[st.session_state.df['PAYEENAME']==st.session_state.kpi_flag]
 
 if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: # 
-    tab1,tab2,tab3=st.tabs(['Textual Summary',"Data","KPI Level"])
+    tab1,tab2,tab3,tab4=st.tabs(['Textual Summary',"Data","KPI Level","News"])
     # avg_score=sum([dict1["Score"] for dict1 in st.session_state['list_of_KPI']])/len(st.session_state['list_of_KPI'])
     
     # col_b.markdown(f"**Lead Rating**   :: {round(avg_score,2)}")
@@ -340,6 +343,12 @@ if st.session_state.Summary and st.session_state.kpi_flag==selected_ticker: #
                                 unsafe_allow_html=True,
                             )
                         st.markdown("</div>", unsafe_allow_html=True)  # Close the margin wrapper
+    with tab4:
+        for news in st.session_state.news_data:
+            st.markdown(f"**{news[0].metadata['title'].strip()}**")
+            st.markdown( news[0].metadata['description'])
+            st.markdown( news[0].metadata['source'])
+            st.divider()
 
 else:
     st.info("Insight for the selected customer is not available. Click the Start button to begin the analysis.")
