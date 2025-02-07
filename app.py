@@ -90,6 +90,9 @@ if button:
     if st.session_state.financial_data==None:
         st.session_state.kpi_flag=selected_ticker
         query=f"what is the revenue growth of {selected_ticker} news, reports"
+        print(f"### Search Query :: {query}")
+        
+        ## Step-1 :: Financial Data Analysis
         obj=WebSearch()
         text_docs_list=obj.fecth_text(query)
         st.session_state.financial_data=data_financial_preprocessing(selected_ticker,text_docs_list)
@@ -143,6 +146,7 @@ if button:
         st.session_state.Recommendation=final_response['Recommendation']
         st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
 
+        ## Step-2 :: linkedin Profile  
         query=f"The linkedin profile's of the ceo, cto and key decision-makers at {selected_ticker}"
         obj=WebSearch()
         text_docs_list=obj.fecth_text(query)
@@ -181,6 +185,7 @@ if button:
             print("-------------------------org response-----------------------------------")
             print(st.session_state.org_response)
 
+        ## Step-3 :: linkedin Profile  
         # query=f"latest financial news, stock performance and market analysis news for {selected_ticker}"
         query=f"latest news of {selected_ticker}"
         obj=WebSearch()
