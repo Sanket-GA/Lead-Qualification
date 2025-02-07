@@ -39,9 +39,9 @@ class WebSearch():
                     pdf_text = ""
                     for page in pdf_reader.pages:
                         pdf_text += page.extract_text() + "\n"
-                    pdf_text_limit=' '.join(pdf_text.split(" ")[:20000])
+                    # pdf_text_limit=' '.join(pdf_text.split(" ")[:20000])
                     # Store the extracted text
-                    text_docs.append([{"source": url, "content": pdf_text_limit}])
+                    text_docs.append([{"source": url, "content": pdf_text}])
                 except:
                     print("Url Not process ::",url)
             else:
@@ -50,8 +50,8 @@ class WebSearch():
                     docs = loader.load()
                     html2text = Html2TextTransformer()
                     docs_transformed = html2text.transform_documents(docs)
-                    docs_transformed=str(docs_transformed)
-                    docs_transformed=' '.join(docs_transformed.split(" ")[:20000])
+                    # docs_transformed=str(docs_transformed)
+                    # docs_transformed=' '.join(docs_transformed.split(" ")[:20000])
                     text_docs.append(docs_transformed)
                 except:
                     print("Url Not process ::",url)
