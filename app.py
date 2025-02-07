@@ -84,19 +84,7 @@ payee_name_list=st.session_state.df['PAYEENAME'].to_list()
 selected_ticker=col_s.selectbox("Select the Payee ::",payee_name_list)
 button=col_s.button("Start")
 
-if selected_ticker=="BREVILLE CANADA, L.P.":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF2AfxH1JnJZGT9rtN6nu3pg9pVoZUMwmDvg&s",width=200)
-elif selected_ticker=="TRUSTLY GROUP AB":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr1L1bIlcgPz2dG8dgbkwYWkk30PsJcVGejg&s",width=200)
-elif selected_ticker=="MANULIFE FINANCIAL":
-    col_b.image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkdUgUPjXQkcvq_ZvrOgoH0G70kj64IVZyVQ&s",width=200)
-elif selected_ticker=="UNIVERSITY HEALTH NETWORK":
-    col_b.image("https://s3-eu-west-1.amazonaws.com/assets.in-part.com/universities/121/d7SK72jRvKuJkx50k0Tz_UHN-logo-new.png",width=200)
-elif selected_ticker=="Cenovus Energy Inc.":
-    col_b.image("https://cdn.cookielaw.org/logos/f9494f49-e682-408b-a250-2617c7517ebd/82a6d757-3704-4928-9049-9f920887f23c/34911ca0-0234-4f94-af80-9b3f9d921667/2021-CVE-Logo-RGB.png",width=200)
-    # col_i.divider()
 
-    # 
 
 if button:
     if st.session_state.financial_data==None:
@@ -104,129 +92,127 @@ if button:
         query=f"what is the revenue growth of {selected_ticker} news, reports"
         obj=WebSearch()
         text_docs_list=obj.fecth_text(query)
-
         st.session_state.financial_data=data_financial_preprocessing(selected_ticker,text_docs_list)
+        financial_prompt_=f"""You are an expert assistant specializing in financial data analysis and lead qualification. Your primary task is to summarize and evaluate provided financial and other data from the current and past years of {selected_ticker} company to determine the qualification of potential payee customers. Use your expertise to determine whether the payee customer qualifies as a potential customer based on their financial information and stability and risk profile.
 
-    financial_prompt_=f"""You are an expert assistant specializing in financial data analysis and lead qualification. Your primary task is to summarize and evaluate provided financial and other data from the current and past years of {selected_ticker} company to determine the qualification of potential payee customers. Use your expertise to determine whether the payee customer qualifies as a potential customer based on their financial information and stability and risk profile.
+        Below is the key guidelines for defining company performance:
+        1. Assess and Summarize financial data over multiple years to identify consistent stability and growth trends.
+        2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.   
+        3. Determine the customer's financial risk profile by examining key financial indicators and metrics.
+        4. Ensure that the customer meets established thresholds for financial stability and operational efficiency.
+        5. Use a data-driven approach to identify customers that align with the company's long-term payment management objectives.
+        6. Always perform a thorough analysis of 5-6 important metrics to maintain comprehensive evaluation standards.
+        7. Highlight key strengths and weaknesses by analyzing the KPI data, focusing on growth, cash flow, profitability, and any identified risks to provide a balanced overview.
+        8. Based on the analysis, determine whether the payee customer qualifies, ensuring to include considerations for monitoring critical metrics and addressing potential risks.
+        9. Ensure that all analysis is relevant and accurate, strictly based on the provided context for {selected_ticker}. Do not include any incorrect details or information about any other company.
 
-    Below is the key guidelines for defining company performance:
-    1. Assess and Summarize financial data over multiple years to identify consistent stability and growth trends.
-    2. Evaluate the ability to manage cash flow, risks and financial obligations effectively.   
-    3. Determine the customer's financial risk profile by examining key financial indicators and metrics.
-    4. Ensure that the customer meets established thresholds for financial stability and operational efficiency.
-    5. Use a data-driven approach to identify customers that align with the company's long-term payment management objectives.
-    6. Always perform a thorough analysis of 5-6 important metrics to maintain comprehensive evaluation standards.
-    7. Highlight key strengths and weaknesses by analyzing the KPI data, focusing on growth, cash flow, profitability, and any identified risks to provide a balanced overview.
-    8. Based on the analysis, determine whether the payee customer qualifies, ensuring to include considerations for monitoring critical metrics and addressing potential risks.
-    9. Ensure that all analysis is relevant and accurate, strictly based on the provided context for {selected_ticker}. Do not include any incorrect details or information about any other company.
+        Scoring Guidelines
+        To assign a score between 1-5 based on performance, you can use the following steps:
+        1. Define Performance Ranges:
+            1. (Poor): Below industry average, significant issues.
+            2. (Below Average): Slightly below industry average, some issues.
+            3. (Average): Meets industry average, stable performance.
+            4. (Above Average): Above industry average, strong performance.
+            5. (Excellent): Significantly above industry average, outstanding performance.
+        2. Assign Scores to Each KPI:
+            1. Compare each KPI to industry benchmarks or historical performance.
+            2. Assign a score based on where the KPI falls within the defined ranges.
 
-    Scoring Guidelines
-    To assign a score between 1-5 based on performance, you can use the following steps:
-    1. Define Performance Ranges:
-        1. (Poor): Below industry average, significant issues.
-        2. (Below Average): Slightly below industry average, some issues.
-        3. (Average): Meets industry average, stable performance.
-        4. (Above Average): Above industry average, strong performance.
-        5. (Excellent): Significantly above industry average, outstanding performance.
-    2. Assign Scores to Each KPI:
-        1. Compare each KPI to industry benchmarks or historical performance.
-        2. Assign a score based on where the KPI falls within the defined ranges.
+        Consider the following key point to structure the output and The output should be in following format:
+        Extract the following information in below list if available otherwise "N/A"
 
-    Consider the following key point to structure the output and The output should be in following format:
-    Extract the following information in below list if available otherwise "N/A"
+        ```{{"About":,'<Provide a brief overview of the company's details(company name, Domain, foundation year etc.) in 1-3 lines.>',
+        "Fundamental_KPI":[{{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }}],
+        "Summary":{{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
+        "Weaknesses":'<Assess areas where the performance lags, focusing on inefficiencies>',
+        "Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>}},
+        "Recommendation":<Base recommendations on a comprehensive analysis of the data, emphasizing whether the payee customer qualifies based on their financial stability, growth potential, and alignment with the company's risk tolerance.>,
+        "Overall Recommendation Score":'<Assign a score between 1-10 based on the payee customer's financial stability, growth potential, and alignment with the company's risk tolerance.>'
+        }}```
+        """+\
+        f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
+        """
+        ans,usage=one_limit_call(financial_prompt_)
+        print("------------------------final Response-----------------------")
+        print(ans)
+        final_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
+        st.session_state.list_of_KPI=final_response['Fundamental_KPI']
+        st.session_state.About=final_response['About']
+        # st.session_state.Company_Details=final_response['Company Details']
+        st.session_state.Summary=final_response['Summary']
+        st.session_state.Recommendation=final_response['Recommendation']
+        st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
 
-    ```{{"About":,'<Provide a brief overview of the company's details(company name, Domain, foundation year etc.) in 1-3 lines.>',
-    "Fundamental_KPI":[{{"KPI":<kpi name>,"Score":<int>,"why":<reason of score low, Avg. or high> }}],
-    "Summary":{{"Strengths":'<Analyze the provided data to highlight areas of strong performance>',
-    "Weaknesses":'<Assess areas where the performance lags, focusing on inefficiencies>',
-    "Risk Profile": <Evaluate the overall financial stability and risk by balancing strengths and weaknesses>}},
-    "Recommendation":<Base recommendations on a comprehensive analysis of the data, emphasizing whether the payee customer qualifies based on their financial stability, growth potential, and alignment with the company's risk tolerance.>,
-    "Overall Recommendation Score":'<Assign a score between 1-10 based on the payee customer's financial stability, growth potential, and alignment with the company's risk tolerance.>'
-    }}```
-    """+\
-    f"""Here is the data of payee customers :: \n {st.session_state.financial_data}
-    """
-    ans,usage=one_limit_call(financial_prompt_)
-    print("------------------------final Response-----------------------")
-    print(ans)
-    final_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
-    st.session_state.list_of_KPI=final_response['Fundamental_KPI']
-    st.session_state.About=final_response['About']
-    # st.session_state.Company_Details=final_response['Company Details']
-    st.session_state.Summary=final_response['Summary']
-    st.session_state.Recommendation=final_response['Recommendation']
-    st.session_state.Overall_Recommendation_Score=final_response['Overall Recommendation Score']
+        query=f"The linkedin profile's of the ceo, cto and key decision-makers at {selected_ticker}"
+        obj=WebSearch()
+        text_docs_list=obj.fecth_text(query)
+        if len(text_docs_list)!=0:
+            st.session_state.org_data=data_org_preprocessing(selected_ticker,text_docs_list)
 
-    query=f"The linkedin profile's of the ceo, cto and key decision-makers at {selected_ticker}"
+            org_prompt_=f"""You are an expert in corporate structures, specializing in identifying decision-making hierarchies within organizations. Your task is to extract, validate, and summarize relevant executive and company details for {selected_ticker}.  
 
-    obj=WebSearch()
-    text_docs_list=obj.fecth_text(query)
-    st.session_state.org_data=data_org_preprocessing(selected_ticker,text_docs_list)
+            ## Guidelines for Data Extraction and Summarization:
+            1. Collect and validate structured data from multiple web sources, including the official website, LinkedIn, Bloomberg, and other credible business directories.  
+            2. Ensure extracted details are 'specific to {selected_ticker}' only—avoid incorrect or unrelated company data.  
+            3. Include the company's founding year, key milestones, and executive leadership details (CEO, CFO, and key decision-makers).  
+            4. Extract tenure, past experience, achievements, and LinkedIn profiles of executives.  
+            5. Always return the LinkedIn url from source of document.
+            6. Prioritize verified and up-to-date information. If no relevant details are found, return `"NA"`.  
+            7. Ensure accuracy and consistency across different sources before structuring the final output.  
 
-    org_prompt_=f"""You are an expert in corporate structures, specializing in identifying decision-making hierarchies within organizations. Your task is to extract, validate, and summarize relevant executive and company details for {selected_ticker}.  
+            ## Here is the data of company data :: {st.session_state.org_data}
 
-    ## Guidelines for Data Extraction and Summarization:
-    1. Collect and validate structured data from multiple web sources, including the official website, LinkedIn, Bloomberg, and other credible business directories.  
-    2. Ensure extracted details are 'specific to {selected_ticker}' only—avoid incorrect or unrelated company data.  
-    3. Include the company's founding year, key milestones, and executive leadership details (CEO, CFO, and key decision-makers).  
-    4. Extract tenure, past experience, achievements, and LinkedIn profiles of executives.  
-    5. Always return the LinkedIn url from source of document.
-    6. Prioritize verified and up-to-date information. If no relevant details are found, return `"NA"`.  
-    7. Ensure accuracy and consistency across different sources before structuring the final output.  
+            ## Output Format (JSON Only)
+            The final response must follow the JSON structure below:  
+            sample example: ```json {{
+            "company_name": "<company_name>",
+            "company_website": "<company_website>",
+            "company_linkedin_profile": "<company_linkedin_profile>",
+            "founding_year": "<founding_year>",
+            "executives": [{{
+                "name": "<executive_name>",
+                "role": "Chief Executive Officer",
+                "tenure": "<start_year> - Present",
+                "linkedin_profile": "<linkedin_profile_url>",
+                "contact_email": "<contact_email>"}}]}}"""
 
-    ## Here is the data of company data :: {st.session_state.org_data}
+            ans,usage=one_limit_call(org_prompt_)
+            st.session_state.org_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
+            print("-------------------------org response-----------------------------------")
+            print(st.session_state.org_response)
 
-    ## Output Format (JSON Only)
-    The final response must follow the JSON structure below:  
-    sample example: ```json {{
-    "company_name": "<company_name>",
-    "company_website": "<company_website>",
-    "company_linkedin_profile": "<company_linkedin_profile>",
-    "founding_year": "<founding_year>",
-    "executives": [{{
-        "name": "<executive_name>",
-        "role": "Chief Executive Officer",
-        "tenure": "<start_year> - Present",
-        "linkedin_profile": "<linkedin_profile_url>",
-        "contact_email": "<contact_email>"}}]}}"""
-
-    ans,usage=one_limit_call(org_prompt_)
-    st.session_state.org_response=literal_eval(ans[ans.find("{"):ans.rfind("}")+1])
-    print("-------------------------org response-----------------------------------")
-    print(st.session_state.org_response)
-
-    # query=f"latest financial news, stock performance and market analysis news for {selected_ticker}"
-    query=f"latest news of {selected_ticker}"
-    obj=WebSearch()
-    news_data=obj.fecth_text(query,top_n=7)
-    # st.session_state.
-    st.session_state.news_summerize_list=[]
-    for i,doc in enumerate(news_data):
-        try:
-            if 'content' in news_data[i][0]:
-                # print("-------------------summary context--------------------------")
-                context=news_data[i][0]["content"]
-                # print(context)
-                source=news_data[i][0]["source"]
-                prompt_=get_summary_prompt(selected_ticker,context)
-                extracted_data,usage=one_limit_call(prompt_)
-                print("----------------------Summary----------------------")
-                print(extracted_data)
-                if "NA" not in extracted_data:
-                    st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
-            else:
-                # print("-------------------summary context--------------------------")
-                context=str(news_data[i][0])
-                # print(context)
-                source=news_data[i][0].metadata["source"]
-                prompt_=get_summary_prompt(selected_ticker,context)
-                extracted_data,usage=one_limit_call(prompt_)
-                print("----------------------Summary----------------------")
-                print(extracted_data)
-                if "NA" not in extracted_data:
-                    st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
-        except:
-            pass
+        # query=f"latest financial news, stock performance and market analysis news for {selected_ticker}"
+        query=f"latest news of {selected_ticker}"
+        obj=WebSearch()
+        news_data=obj.fecth_text(query,top_n=7)
+        if len(news_data)!=0:
+            st.session_state.news_summerize_list=[]
+            for i,doc in enumerate(news_data):
+                try:
+                    if 'content' in news_data[i][0]:
+                        # print("-------------------summary context--------------------------")
+                        context=news_data[i][0]["content"]
+                        # print(context)
+                        source=news_data[i][0]["source"]
+                        prompt_=get_summary_prompt(selected_ticker,context)
+                        extracted_data,usage=one_limit_call(prompt_)
+                        print("----------------------Summary----------------------")
+                        print(extracted_data)
+                        if "NA" not in extracted_data:
+                            st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
+                    else:
+                        # print("-------------------summary context--------------------------")
+                        context=str(news_data[i][0])
+                        # print(context)
+                        source=news_data[i][0].metadata["source"]
+                        prompt_=get_summary_prompt(selected_ticker,context)
+                        extracted_data,usage=one_limit_call(prompt_)
+                        print("----------------------Summary----------------------")
+                        print(extracted_data)
+                        if "NA" not in extracted_data:
+                            st.session_state.news_summerize_list.append({"source":source,"summary":extracted_data})
+                except:
+                    pass
         
 
 # Define the number of columns

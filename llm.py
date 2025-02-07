@@ -31,4 +31,4 @@ def one_limit_call(prompt_):
 
     except Exception as e:
         print("Exception in one_limit_call Azure Call:", e)
-        time.sleep(10)
+        # time.sleep(10)

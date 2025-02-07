@@ -50,7 +50,7 @@ class WebSearch():
                     docs = loader.load()
                     html2text = Html2TextTransformer()
                     docs_transformed = html2text.transform_documents(docs)
-                    print(docs_transformed)
+                    # print(docs_transformed)
                     text_docs.append(docs_transformed)
                 except:
                     print("Url Not process ::",url)
@@ -92,7 +92,7 @@ def data_org_preprocessing(target_company,text_docs_list):
             extracted_data,usage=one_limit_call(prompt_)
             print(extracted_data)
             final_summerize_response.append(extracted_data)
-    final_data='\n\n'.join(final_summerize_response)
+    final_data='\n\n'.join(final_summerize_response).replace("{","{{").replace("}","}}")
     return final_data
 
 
