@@ -41,6 +41,7 @@ class WebSearch():
                         pdf_text += page.extract_text() + "\n"
                     # pdf_text_limit=' '.join(pdf_text.split(" ")[:20000])
                     # Store the extracted text
+                    # print(pdf_text)
                     text_docs.append([{"source": url, "content": pdf_text}])
                 except:
                     print("Url Not process ::",url)
@@ -52,6 +53,7 @@ class WebSearch():
                     docs_transformed = html2text.transform_documents(docs)
                     # docs_transformed=str(docs_transformed)
                     # docs_transformed=' '.join(docs_transformed.split(" ")[:20000])
+                    # print(docs_transformed)
                     text_docs.append(docs_transformed)
                 except:
                     print("Url Not process ::",url)
@@ -63,13 +65,13 @@ def data_financial_preprocessing(target_company,text_docs_list):
     for i,doc in enumerate(text_docs_list):
         print("-------------------------------------------------------------------------")
         if 'content' in text_docs_list[i][0]:
-            context=str(text_docs_list[i][0])
+            context=text_docs_list[i][0]['content']
             prompt_=get_financial_prompt(target_company,context)
             extracted_data,usage=one_limit_call(prompt_)
             # print(extracted_data)
             final_summerize_response.append(extracted_data)
         else:
-            context=str(text_docs_list[i][0])
+            context=text_docs_list[i][0].page_content
             prompt_=get_financial_prompt(target_company,context)
             extracted_data,usage=one_limit_call(prompt_)
             # print(extracted_data)
@@ -113,6 +115,7 @@ def get_financial_prompt(target_company,context):
     Here is the data of payee customers:{context}
     response: """
     return prompt_
+
 
 def get_org_prompt(target_company,context):
     prompt_=f"""You are an expert in corporate structures, specializing in identifying decision-making hierarchies within organizations.  Your task is to find relevant executives and stakeholders at {target_company}, including their names, roles, professional contact details and LinkedIn profiles. Your work provides Convera with direct access to financial decision-makers, enabling effective outreach and engagement with potential payee customers.
