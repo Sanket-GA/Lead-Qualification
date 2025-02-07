@@ -1,6 +1,6 @@
 import streamlit as st
 from utility_v2 import WebSearch,data_financial_preprocessing,data_org_preprocessing,create_gauge_chart,get_summary_prompt
-from llm import one_limit_call
+from llm import one_limit_call,one_limit_call_1
 from ast import literal_eval
 from streamlit_card import card
 import pandas as pd
@@ -91,7 +91,7 @@ if button:
         st.session_state.kpi_flag=selected_ticker
         query=f"what is the revenue growth of {selected_ticker} news, reports"
         print(f"### Search Query :: {query}")
-        
+
         ## Step-1 :: Financial Data Analysis
         obj=WebSearch()
         text_docs_list=obj.fecth_text(query)

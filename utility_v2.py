@@ -6,7 +6,7 @@ from googlesearch import search
 import io
 import requests
 from PyPDF2 import PdfReader
-from llm import one_limit_call
+from llm import one_limit_call,one_limit_call_1
 import plotly.graph_objects as go
 
 
@@ -65,7 +65,7 @@ def data_financial_preprocessing(target_company,text_docs_list):
         if 'content' in text_docs_list[i][0]:
             context=str(text_docs_list[i][0])
             prompt_=get_financial_prompt(target_company,context)
-            # extracted_data,usage=one_limit_call(prompt_)
+            extracted_data,usage=one_limit_call(prompt_)
             # print(extracted_data)
             final_summerize_response.append(extracted_data)
         else:
@@ -84,13 +84,13 @@ def data_org_preprocessing(target_company,text_docs_list):
         if 'content' in text_docs_list[i][0]:
             context=text_docs_list[i][0]
             prompt_=get_org_prompt(target_company,context)
-            extracted_data,usage=one_limit_call(prompt_)
+            extracted_data,usage=one_limit_call_1(prompt_)
             print(extracted_data)
             final_summerize_response.append(extracted_data)
         else:
             context=text_docs_list[i][0]
             prompt_=get_org_prompt(target_company,context)
-            extracted_data,usage=one_limit_call(prompt_)
+            extracted_data,usage=one_limit_call_1(prompt_)
             print(extracted_data)
             final_summerize_response.append(extracted_data)
     final_data='\n\n'.join(final_summerize_response).replace("{","{{").replace("}","}}")
