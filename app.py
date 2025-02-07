@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import os
 import streamlit as st
 import pandas as pd
+import streamlit as st
+
 
 ## Streamlit Header
 st.set_page_config(page_title="Lead Whisper", layout="wide")
@@ -229,7 +231,6 @@ if button:
 
 # Define the number of columns
 num_of_cols = 6
-
 # Function to determine color based on score
 def get_score_color(score):
     if score >= 4:
@@ -248,8 +249,6 @@ def get_card_background_color(score):
     else:
         return '#ffcccb'  # Light red
 
-
-import streamlit as st
 
 # Function to create a styled card
 def profile_card(name, role, tenure, linkedin_profile, contact_email, width='400px', height='250px'):
