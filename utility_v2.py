@@ -39,17 +39,18 @@ class WebSearch():
                     pdf_text = ""
                     for page in pdf_reader.pages:
                         pdf_text += page.extract_text() + "\n"
+                    pdf_text_limit=' '.join(pdf_text.split("\n")[:20000])
                     # Store the extracted text
-                    text_docs.append([{"source": url, "content": pdf_text}])
+                    text_docs.append([{"source": url, "content": pdf_text_limit}])
                 except:
                     print("Url Not process ::",url)
             else:
                 try:
-                    loader = AsyncHtmlLoader([url])
+                    loader = AsyncHtmlLoader([url],ignore_load_errors=True)
                     docs = loader.load()
                     html2text = Html2TextTransformer()
                     docs_transformed = html2text.transform_documents(docs)
-                    # print(docs_transformed)
+                    print(docs_transformed)
                     text_docs.append(docs_transformed)
                 except:
                     print("Url Not process ::",url)
@@ -143,11 +144,10 @@ def get_org_prompt(target_company,context):
 
 
 def get_summary_prompt(topic,context):
-    prompt_ = f"""
-You are a summary generator. Please generate a concise summary (50-100 words) based on the following topic and customer data.
+    # Topic: {topic}  
+    prompt_ = f"""Please generate a concise summary (50-100 words) realted to the company {topic} from the news data.
 If there is no relevant information in the news data, return "NA."
 
-Topic: {topic}  
 news data: {context}  
 Summary:
 """

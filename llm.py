@@ -2,7 +2,7 @@ from openai import AzureOpenAI
 from dotenv import load_dotenv
 import os
 import streamlit as st
-
+import time
 load_dotenv()
 
 client = AzureOpenAI(
@@ -31,3 +31,4 @@ def one_limit_call(prompt_):
 
     except Exception as e:
         print("Exception in one_limit_call Azure Call:", e)
+        time.sleep(10)
